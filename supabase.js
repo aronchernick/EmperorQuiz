@@ -58,29 +58,29 @@ class GameDatabase {
     return this.sessionId;
   }
 
-  async recordResponse(questionId, branch, liked, timeSpentMs) {
+  async recordResponse(questionId, category, agreed, timeSpentMs) {
     if (!this.sessionId) return;
     await this._fetch('responses', {
       method: 'POST',
       body: JSON.stringify({
         session_id: this.sessionId,
         question_id: questionId,
-        branch,
-        liked,
+        category,
+        liked: agreed,
         time_spent_ms: timeSpentMs
       })
     });
   }
 
-  async finalizeSession(questionsAnswered, primaryBranch, secondaryBranch, durationSeconds) {
+  async finalizeSession(questionsAnswered, primaryEmperor, secondaryEmperor, durationSeconds) {
     if (!this.sessionId) return;
     await this._fetch(`game_sessions?id=eq.${this.sessionId}`, {
       method: 'PATCH',
       body: JSON.stringify({
         finished_at: new Date().toISOString(),
         questions_answered: questionsAnswered,
-        primary_branch: primaryBranch,
-        secondary_branch: secondaryBranch,
+        primary_emperor: primaryEmperor,
+        secondary_emperor: secondaryEmperor,
         duration_seconds: durationSeconds,
         completed: true
       })
@@ -126,16 +126,16 @@ class GameDatabase {
     return Array.isArray(data) ? data : [];
   }
 
-  async getPrimaryBranchPercentage(branch) {
+  async getPrimaryEmperorPercentage(emperor) {
     const sessions = await this.getCompletedSessions();
     if (sessions.length === 0) return 0;
-    const matching = sessions.filter(s => s.primary_branch === branch).length;
+    const matching = sessions.filter(s => s.primary_emperor === emperor).length;
     return Math.round((matching / sessions.length) * 100);
   }
 
   async getComboCount(primary, secondary) {
     const sessions = await this.getCompletedSessions();
-    return sessions.filter(s => s.primary_branch === primary && s.secondary_branch === secondary).length;
+    return sessions.filter(s => s.primary_emperor === primary && s.secondary_emperor === secondary).length;
   }
 
   async getAvgQuestionsCompleted() {

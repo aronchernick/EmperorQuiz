@@ -1,41 +1,45 @@
-class PhilosophyGame {
+// Emperor Quiz — Main Game Logic
+// Scores questions toward specific Roman emperors based on agree/disagree weights.
+
+class EmperorQuiz {
   constructor() {
     this.totalCards = 20;
     this.currentIndex = 0;
     this.responses = [];
-    this.branchScores = {};
+    this.emperorScores = {};
+    this.categoryStats = {};
     this.askedIds = new Set();
     this.currentQuestion = null;
     this.isAnimating = false;
     this.startTime = null;
     this.questionStartTime = null;
-    this.primaryBranch = null;
-    this.secondaryBranch = null;
+    this.primaryEmperor = null;
+    this.secondaryEmperor = null;
     this.durationSeconds = 0;
 
-    Object.keys(BRANCHES).forEach(branch => {
-      this.branchScores[branch] = { likes: 0, dislikes: 0, asked: 0 };
+    Object.keys(EMPERORS).forEach(key => {
+      this.emperorScores[key] = 0;
+    });
+
+    Object.keys(CATEGORIES).forEach(cat => {
+      this.categoryStats[cat] = { agrees: 0, disagrees: 0, asked: 0 };
     });
 
     this.init();
   }
 
   async init() {
-  this.bindEvents();
-  this.showScreen('start-screen');
-  await this.ensureConfigReady();
-  gameDB.trackEvent('page_load');
-}
+    this.bindEvents();
+    this.showScreen('start-screen');
+    await this.ensureConfigReady();
+    gameDB.trackEvent('page_load');
+  }
 
   async ensureConfigReady() {
-  if (window.appReady) {
-    try {
-      await window.appReady;
-    } catch {
-      // no-op
+    if (window.appReady) {
+      try { await window.appReady; } catch { /* no-op */ }
     }
   }
-}
 
   bindEvents() {
     document.getElementById('start-btn').addEventListener('click', () => this.startGame());
@@ -55,7 +59,7 @@ class PhilosophyGame {
         alert('Developer email is not configured yet.');
         return;
       }
-      window.location.href = `mailto:${email}?subject=Philosophy%20Game%20Feedback`;
+      window.location.href = `mailto:${email}?subject=Emperor%20Quiz%20Feedback`;
     });
 
     document.addEventListener('keydown', (e) => {
@@ -94,8 +98,9 @@ class PhilosophyGame {
     this.currentIndex = 0;
     this.responses = [];
     this.askedIds = new Set();
-    Object.keys(BRANCHES).forEach(branch => {
-      this.branchScores[branch] = { likes: 0, dislikes: 0, asked: 0 };
+    Object.keys(EMPERORS).forEach(key => { this.emperorScores[key] = 0; });
+    Object.keys(CATEGORIES).forEach(cat => {
+      this.categoryStats[cat] = { agrees: 0, disagrees: 0, asked: 0 };
     });
     this.startTime = Date.now();
 
@@ -112,59 +117,59 @@ class PhilosophyGame {
     if (remaining.length === 0) return null;
 
     const totalAsked = this.currentIndex;
+    const categories = Object.keys(CATEGORIES);
 
-    if (totalAsked < Object.keys(BRANCHES).length) {
-      const branchesAsked = new Set(this.responses.map(r => r.branch));
-      const unaskedBranches = Object.keys(BRANCHES).filter(b => !branchesAsked.has(b));
+    // Phase 1: Ensure each category is asked at least once
+    if (totalAsked < categories.length) {
+      const categoriesAsked = new Set(this.responses.map(r => r.category));
+      const unasked = categories.filter(c => !categoriesAsked.has(c));
 
-      if (unaskedBranches.length > 0) {
-        const branch = unaskedBranches[Math.floor(Math.random() * unaskedBranches.length)];
-        const branchQuestions = remaining.filter(q => q.branch === branch);
-        if (branchQuestions.length > 0) {
-          return branchQuestions[Math.floor(Math.random() * branchQuestions.length)];
+      if (unasked.length > 0) {
+        const cat = unasked[Math.floor(Math.random() * unasked.length)];
+        const catQuestions = remaining.filter(q => q.category === cat);
+        if (catQuestions.length > 0) {
+          return catQuestions[Math.floor(Math.random() * catQuestions.length)];
         }
       }
     }
 
-    if (totalAsked < Object.keys(BRANCHES).length * 2) {
-      const branchCounts = {};
-      Object.keys(BRANCHES).forEach(b => branchCounts[b] = 0);
-      this.responses.forEach(r => branchCounts[r.branch]++);
+    // Phase 2: Ensure each category gets at least 2
+    if (totalAsked < categories.length * 2) {
+      const catCounts = {};
+      categories.forEach(c => catCounts[c] = 0);
+      this.responses.forEach(r => catCounts[r.category]++);
 
-      const underRepresented = Object.keys(BRANCHES).filter(b => branchCounts[b] < 2);
-      if (underRepresented.length > 0) {
-        const branch = underRepresented[Math.floor(Math.random() * underRepresented.length)];
-        const branchQuestions = remaining.filter(q => q.branch === branch);
-        if (branchQuestions.length > 0) {
-          return branchQuestions[Math.floor(Math.random() * branchQuestions.length)];
+      const underRep = categories.filter(c => catCounts[c] < 2);
+      if (underRep.length > 0) {
+        const cat = underRep[Math.floor(Math.random() * underRep.length)];
+        const catQuestions = remaining.filter(q => q.category === cat);
+        if (catQuestions.length > 0) {
+          return catQuestions[Math.floor(Math.random() * catQuestions.length)];
         }
       }
     }
 
+    // Phase 3: Weighted random toward categories with more agrees
     if (Math.random() < 0.7) {
       const weights = {};
       let totalWeight = 0;
 
-      Object.keys(BRANCHES).forEach(branch => {
-        const score = this.branchScores[branch];
-        const w = score.likes + 1;
-        weights[branch] = w;
+      categories.forEach(cat => {
+        const w = this.categoryStats[cat].agrees + 1;
+        weights[cat] = w;
         totalWeight += w;
       });
 
       let pick = Math.random() * totalWeight;
-      let selectedBranch = null;
-      for (const branch of Object.keys(weights)) {
-        pick -= weights[branch];
-        if (pick <= 0) {
-          selectedBranch = branch;
-          break;
-        }
+      let selectedCat = null;
+      for (const cat of Object.keys(weights)) {
+        pick -= weights[cat];
+        if (pick <= 0) { selectedCat = cat; break; }
       }
 
-      const branchQuestions = remaining.filter(q => q.branch === selectedBranch);
-      if (branchQuestions.length > 0) {
-        return branchQuestions[Math.floor(Math.random() * branchQuestions.length)];
+      const catQuestions = remaining.filter(q => q.category === selectedCat);
+      if (catQuestions.length > 0) {
+        return catQuestions[Math.floor(Math.random() * catQuestions.length)];
       }
     }
 
@@ -191,9 +196,9 @@ class PhilosophyGame {
     document.getElementById('progress-fill').style.width = `${progress}%`;
     document.getElementById('card-count').textContent = `${this.currentIndex + 1} / ${this.totalCards}`;
 
-    const branchInfo = BRANCHES[question.branch];
-    document.getElementById('card-branch').textContent = `${branchInfo.icon} ${branchInfo.name}`;
-    document.getElementById('card-branch').style.background = branchInfo.color;
+    const catInfo = CATEGORIES[question.category];
+    document.getElementById('card-branch').textContent = `${catInfo.icon} ${catInfo.name}`;
+    document.getElementById('card-branch').style.background = catInfo.color;
     document.getElementById('card-text').textContent = question.text;
     document.getElementById('card-context').textContent = question.context;
 
@@ -203,26 +208,34 @@ class PhilosophyGame {
     requestAnimationFrame(() => card.classList.remove('card-enter'));
   }
 
-  respond(liked) {
+  respond(agreed) {
     if (this.isAnimating || !this.currentQuestion) return;
     this.isAnimating = true;
 
     const question = this.currentQuestion;
-    const branch = question.branch;
+    const category = question.category;
     const timeSpentMs = Date.now() - this.questionStartTime;
 
-    this.responses.push({ questionId: question.id, branch, liked, timeSpentMs });
+    this.responses.push({ questionId: question.id, category, agreed, timeSpentMs });
 
-    this.branchScores[branch].asked++;
-    if (liked) this.branchScores[branch].likes++;
-    else this.branchScores[branch].dislikes++;
+    this.categoryStats[category].asked++;
+    if (agreed) this.categoryStats[category].agrees++;
+    else this.categoryStats[category].disagrees++;
 
-    gameDB.recordResponse(question.id, branch, liked, timeSpentMs);
+    // Apply emperor scoring based on agree/disagree weights
+    const scoring = agreed ? question.agree : question.disagree;
+    if (scoring) {
+      Object.entries(scoring).forEach(([emperor, points]) => {
+        this.emperorScores[emperor] = (this.emperorScores[emperor] || 0) + points;
+      });
+    }
+
+    gameDB.recordResponse(question.id, category, agreed, timeSpentMs);
 
     const card = document.getElementById('question-card');
-    card.classList.add(liked ? 'card-exit-right' : 'card-exit-left');
+    card.classList.add(agreed ? 'card-exit-right' : 'card-exit-left');
 
-    const btn = liked ? document.getElementById('like-btn') : document.getElementById('dislike-btn');
+    const btn = agreed ? document.getElementById('like-btn') : document.getElementById('dislike-btn');
     btn.classList.add('btn-flash');
     setTimeout(() => btn.classList.remove('btn-flash'), 300);
 
@@ -249,124 +262,80 @@ class PhilosophyGame {
   }
 
   calculateResults() {
-    const ranked = Object.keys(BRANCHES)
-      .map(branch => {
-        const score = this.branchScores[branch];
-        const total = score.likes + score.dislikes;
-        const rate = total > 0 ? score.likes / total : 0;
-        return { branch, rate, likes: score.likes, total };
-      })
-      .sort((a, b) => {
-        if (b.rate !== a.rate) return b.rate - a.rate;
-        if (b.likes !== a.likes) return b.likes - a.likes;
-        return b.total - a.total;
-      });
+    // Rank all emperors by accumulated score
+    const ranked = Object.entries(this.emperorScores)
+      .map(([key, score]) => ({ key, score, emperor: EMPERORS[key] }))
+      .filter(e => e.emperor)
+      .sort((a, b) => b.score - a.score);
 
-    this.primaryBranch = ranked[0].branch;
-    this.secondaryBranch = ranked[1] ? ranked[1].branch : ranked[0].branch;
+    this.primaryEmperor = ranked[0] ? ranked[0].key : null;
+    this.secondaryEmperor = ranked[1] ? ranked[1].key : (ranked[0] ? ranked[0].key : null);
 
-    const primary = BRANCH_DESCRIPTIONS[this.primaryBranch];
-    const secondary = BRANCH_DESCRIPTIONS[this.secondaryBranch];
-    const comboKey = `${this.primaryBranch}-${this.secondaryBranch}`;
-    const comboName = COMBO_LABELS[comboKey] || `${primary.tagline} × ${secondary.tagline}`;
+    const primary = this.primaryEmperor ? EMPERORS[this.primaryEmperor] : null;
+    const secondary = this.secondaryEmperor ? EMPERORS[this.secondaryEmperor] : null;
 
-    document.getElementById('type-title').textContent = comboName;
-    document.getElementById('type-subtitle').textContent = `${primary.icon} ${primary.name} · ${secondary.icon} ${secondary.name}`;
-    document.getElementById('type-description').textContent =
-      `${primary.name}. ${primary.description}\n\n   ${secondary.name}. ${secondary.description}`;
+    if (primary) {
+      document.getElementById('type-title').textContent = `${primary.icon} ${primary.name}`;
+      document.getElementById('type-subtitle').textContent = `${primary.title} · ${primary.reign}`;
+      document.getElementById('type-description').textContent = primary.description;
+      document.getElementById('result-gif').src = primary.gif || '';
 
-    document.getElementById('result-gif').src = RESULT_GIFS[this.primaryBranch] || RESULT_GIFS.ethics;
+      const traitsEl = document.getElementById('emperor-traits');
+      if (traitsEl) {
+        let traitsText = `Your Emperor: ${primary.name}\n${primary.traits}`;
+        if (secondary && this.secondaryEmperor !== this.primaryEmperor) {
+          traitsText += `\n\nRunner-up: ${secondary.name}\n${secondary.traits}`;
+        }
+        traitsEl.textContent = traitsText;
+      }
+    }
 
     if (typeof gtag === 'function') {
       gtag('event', 'result_identity', {
-        primary_branch: this.primaryBranch,
-        secondary_branch: this.secondaryBranch,
-        combo_name: comboName
+        primary_emperor: this.primaryEmperor,
+        secondary_emperor: this.secondaryEmperor
       });
     }
 
-    this.renderStats();
-    this.renderBooks();
+    this.renderStats(ranked);
 
     gameDB.finalizeSession(
       this.responses.length,
-      this.primaryBranch,
-      this.secondaryBranch,
+      this.primaryEmperor,
+      this.secondaryEmperor,
       this.durationSeconds
     );
   }
 
-  renderStats() {
+  renderStats(ranked) {
     const container = document.getElementById('branch-stats');
     container.innerHTML = '';
 
-    const totalResponses = this.responses.length;
-    const sorted = Object.keys(BRANCHES)
-      .map(branch => ({ branch, ...this.branchScores[branch] }))
-      .filter(s => s.likes + s.dislikes > 0)
-      .sort((a, b) => b.likes - a.likes);
+    // Show top 6 emperors with scores
+    const topEmperors = ranked.filter(e => e.score > 0).slice(0, 6);
+    const maxScore = topEmperors.length > 0 ? topEmperors[0].score : 1;
 
-    sorted.forEach(({ branch, likes, dislikes }) => {
-      const info = BRANCHES[branch];
-      const total = likes + dislikes;
-      const likePercent = total > 0 ? Math.round((likes / total) * 100) : 0;
-      const dislikePercent = 100 - likePercent;
+    topEmperors.forEach(({ key, score, emperor }) => {
+      const percent = Math.round((score / maxScore) * 100);
 
       const statEl = document.createElement('div');
       statEl.className = 'branch-stat';
       statEl.innerHTML = `
         <div class="branch-stat-header">
-          <span class="branch-stat-name">${info.icon} ${info.name}</span>
-          <span class="branch-stat-count">${likes} liked / ${total} shown</span>
+          <span class="branch-stat-name">${emperor.icon} ${emperor.name}</span>
+          <span class="branch-stat-count">${score} points</span>
         </div>
         <div class="stat-bar-container">
-          <div class="stat-bar" style="width: ${likePercent}%; background: ${info.color}">${likePercent > 15 ? `👍 ${likes}` : ''}</div>
-          <div class="stat-bar stat-bar-dislike" style="width: ${dislikePercent}%">${dislikePercent > 15 ? `👎 ${dislikes}` : ''}</div>
+          <div class="stat-bar" style="width: ${percent}%; background: ${emperor.color}">${percent > 15 ? `${score} pts` : ''}</div>
         </div>
       `;
       container.appendChild(statEl);
     });
 
-    const totalLikes = this.responses.filter(r => r.liked).length;
-    const totalDislikes = this.responses.filter(r => !r.liked).length;
+    const totalAgrees = this.responses.filter(r => r.agreed).length;
+    const totalDisagrees = this.responses.filter(r => !r.agreed).length;
     document.getElementById('total-stats').textContent =
-      `${totalResponses} questions answered · ${totalLikes} enjoyed · ${totalDislikes} not for you`;
-  }
-
-  renderBooks() {
-    const container = document.getElementById('book-recommendations');
-    container.innerHTML = '';
-
-    const primaryBooks = (BOOK_RECOMMENDATIONS[this.primaryBranch] || []).slice(0, 3);
-    const secondaryBooks = (BOOK_RECOMMENDATIONS[this.secondaryBranch] || []).slice(0, 2);
-
-    const primaryInfo = BRANCH_DESCRIPTIONS[this.primaryBranch];
-    const secondaryInfo = BRANCH_DESCRIPTIONS[this.secondaryBranch];
-
-    [...primaryBooks, ...secondaryBooks].forEach((book, idx) => {
-      const isSecondary = idx >= 3;
-      const info = isSecondary ? secondaryInfo : primaryInfo;
-
-      const card = document.createElement('div');
-      card.className = 'book-card';
-      card.style.borderLeftColor = info.color;
-      card.innerHTML = `
-        <div class="book-branch-label">${info.icon} ${info.name} · ${isSecondary ? 'Secondary' : 'Primary'}</div>
-        <div class="book-title">${book.title}</div>
-        <div class="book-author">by ${book.author}</div>
-        <div class="book-hook">${book.hook}</div>
-      `;
-
-      const bookUrl = book.url || `https://www.amazon.com/s?k=${encodeURIComponent(`${book.title} ${book.author}`)}`;
-      const link = document.createElement('a');
-      link.className = 'book-link';
-      link.href = bookUrl;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      link.appendChild(card);
-
-      container.appendChild(link);
-    });
+      `${this.responses.length} questions answered · ${totalAgrees} agreed · ${totalDisagrees} disagreed`;
   }
 
   async loadGlobalStats() {
@@ -380,19 +349,20 @@ class PhilosophyGame {
     userSlowest.forEach((r, i) => {
       const question = QUESTIONS.find(q => q.id === r.questionId);
       if (!question) return;
+      const catInfo = CATEGORIES[question.category] || { icon: '❓', name: question.category };
 
       const el = document.createElement('div');
       el.className = 'stat-list-item';
       el.innerHTML = `
         <strong>${i + 1}. ${question.text.slice(0, 90)}...</strong>
-        <div class="stat-detail"><span class="stat-highlight">${(r.timeSpentMs / 1000).toFixed(1)}s</span> · ${BRANCHES[r.branch].icon} ${BRANCHES[r.branch].name}</div>
+        <div class="stat-detail"><span class="stat-highlight">${(r.timeSpentMs / 1000).toFixed(1)}s</span> · ${catInfo.icon} ${catInfo.name}</div>
       `;
       userSlowestContainer.appendChild(el);
     });
 
     const [primaryPct, comboCount, totalHits, totalStarts, totalFinishes, totalReplays, avgQ, answerPop] = await Promise.all([
-      gameDB.getPrimaryBranchPercentage(this.primaryBranch),
-      gameDB.getComboCount(this.primaryBranch, this.secondaryBranch),
+      gameDB.getPrimaryEmperorPercentage(this.primaryEmperor),
+      gameDB.getComboCount(this.primaryEmperor, this.secondaryEmperor),
       gameDB.getTotalPageLoads(),
       gameDB.getTotalStartClicks(),
       gameDB.getTotalResultsViewed(),
@@ -418,8 +388,8 @@ class PhilosophyGame {
       })
       .filter(item => item.q && item.count >= 1);
 
-    this.renderGlobalList('global-most-popular', rows.slice().sort((a, b) => b.likeRate - a.likeRate).slice(0, 3), item => `${Math.round(item.likeRate * 100)}% enjoyed · ${item.count} responses`);
-    this.renderGlobalList('global-least-popular', rows.slice().sort((a, b) => a.likeRate - b.likeRate).slice(0, 3), item => `${Math.round(item.likeRate * 100)}% enjoyed · ${item.count} responses`);
+    this.renderGlobalList('global-most-popular', rows.slice().sort((a, b) => b.likeRate - a.likeRate).slice(0, 3), item => `${Math.round(item.likeRate * 100)}% agreed · ${item.count} responses`);
+    this.renderGlobalList('global-least-popular', rows.slice().sort((a, b) => a.likeRate - b.likeRate).slice(0, 3), item => `${Math.round(item.likeRate * 100)}% agreed · ${item.count} responses`);
     this.renderGlobalList('global-slowest-questions', rows.slice().sort((a, b) => b.avgTime - a.avgTime).slice(0, 3), item => `${(item.avgTime / 1000).toFixed(1)}s average response time`);
   }
 
@@ -454,15 +424,16 @@ class PhilosophyGame {
     this.responses = [];
     this.askedIds = new Set();
     this.currentQuestion = null;
-    this.primaryBranch = null;
-    this.secondaryBranch = null;
-    Object.keys(BRANCHES).forEach(branch => {
-      this.branchScores[branch] = { likes: 0, dislikes: 0, asked: 0 };
+    this.primaryEmperor = null;
+    this.secondaryEmperor = null;
+    Object.keys(EMPERORS).forEach(key => { this.emperorScores[key] = 0; });
+    Object.keys(CATEGORIES).forEach(cat => {
+      this.categoryStats[cat] = { agrees: 0, disagrees: 0, asked: 0 };
     });
     this.showScreen('start-screen');
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  new PhilosophyGame();
+  new EmperorQuiz();
 });

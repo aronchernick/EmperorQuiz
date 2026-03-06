@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /access
+Disallow: /admin.html
 
-Sitemap: https://philosophygame.vercel.app/sitemap.xml
+Sitemap: https://emperorquiz.dev/sitemap.xml

@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS game_sessions (
   finished_at TIMESTAMPTZ,
   duration_seconds INTEGER,
   questions_answered INTEGER DEFAULT 0,
-  primary_branch TEXT,
-  secondary_branch TEXT,
+  primary_emperor TEXT,
+  secondary_emperor TEXT,
   completed BOOLEAN DEFAULT false,
   played_again BOOLEAN DEFAULT false
 );
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS responses (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   session_id UUID REFERENCES game_sessions(id),
   question_id TEXT NOT NULL,
-  branch TEXT NOT NULL,
+  category TEXT NOT NULL,
   liked BOOLEAN NOT NULL,
   time_spent_ms INTEGER,
   created_at TIMESTAMPTZ DEFAULT now()

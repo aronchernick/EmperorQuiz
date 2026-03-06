@@ -1,4 +1,17 @@
 {
+  "redirects": [
+    {
+      "source": "/admin.html",
+      "destination": "/",
+      "statusCode": 308
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/access",
+      "destination": "/admin.html"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

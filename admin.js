@@ -1,4 +1,4 @@
-// Roman Emperor Game — Admin Portal Logic
+// Emperor Quiz — Admin Portal Logic
 // Manages CRUD for emperors and questions via localStorage overlay on the base data.
 
 (function() {
