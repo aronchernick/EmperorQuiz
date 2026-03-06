@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://philosophygame.vercel.app/sitemap.xml

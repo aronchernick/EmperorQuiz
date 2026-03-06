@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emperor Quiz — Which Roman Emperor Are You?</title>
+  <meta name="description" content="Take a 20-question interactive quiz to discover which Roman emperor matches your personality. From Augustus to Justinian, find your imperial identity.">
+
+  <!-- SEO -->
+  <meta name="keywords" content="roman emperor quiz, emperor personality quiz, which emperor are you, rome quiz, history quiz, roman empire, augustus, marcus aurelius, trajan">
+  <meta name="author" content="Aaron Chernick">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://emperorquiz.dev" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Emperor Quiz — Which Roman Emperor Are You?">
+  <meta property="og:description" content="A 20-question interactive quiz that reveals which Roman emperor matches your personality. Power, warfare, justice, culture, character, or politics?">
+  <meta property="og:url" content="https://emperorquiz.dev/">
+  <meta property="og:site_name" content="Emperor Quiz">
+  <meta property="og:image" content="https://emperorquiz.dev/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Emperor Quiz — Discover which Roman emperor matches your personality">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Emperor Quiz — Which Roman Emperor Are You?">
+  <meta name="twitter:description" content="Take a quick quiz to discover which Roman emperor matches your values and leadership style.">
+  <meta name="twitter:image" content="https://emperorquiz.dev/og-image.png">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>">
+
+  <!-- Theme -->
+  <meta name="theme-color" content="#0f0f1a">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- Preconnects -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://media.giphy.com">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Emperor Quiz",
+    "description": "A 20-question interactive quiz that reveals which Roman emperor matches your personality and values.",
+    "url": "https://emperorquiz.dev/",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Aaron Chernick"
+    }
+  }
+  </script>
+
+  <!-- Google Analytics (consent-gated) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HDSSBSYD1J"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+      'analytics_storage': 'denied',
+      'ad_storage': 'denied'
+    });
+    gtag('js', new Date());
+    gtag('config', 'G-HDSSBSYD1J');
+  </script>
+</head>
+<body>
+<noscript>
+  <div style="padding:2em;text-align:center;color:#eee;background:#1a1a2e;min-height:100vh;display:flex;align-items:center;justify-content:center;">
+    <p>Emperor Quiz requires JavaScript to run. Please enable JavaScript in your browser settings.</p>
+  </div>
+</noscript>
+<script>
+  window.appReady = fetch('/api/config')
+    .then(res => res.json())
+    .then(config => { window.APP_CONFIG = config; });
+</script>
+  <div id="start-screen" class="screen">
+    <button id="email-btn" class="btn btn-email-corner" aria-label="Email the developer" title="Email the developer">✉️</button>
+    <div class="start-container">
+      <div class="start-icon">🏛️</div>
+      <h1 class="start-title">Emperor Quiz</h1>
+      <p class="start-subtitle">Discover which Roman emperor matches your personality</p>
+      <div class="start-description">
+        <p>Rome's emperors ruled with wildly different values — ambition, justice, art, ruthlessness, philosophy, pragmatism.</p>
+        <p>You'll see 20 statements about power, war, culture, and character. Simply tell us:</p>
+        <p>Do you agree or disagree?</p>
+      </div>
+      <div class="branch-preview">
+        <span class="branch-pill" style="--pill-color: #C9A84C">👑 Power</span>
+        <span class="branch-pill" style="--pill-color: #D32F2F">⚔️ Warfare</span>
+        <span class="branch-pill" style="--pill-color: #5C6BC0">⚖️ Justice</span>
+        <span class="branch-pill" style="--pill-color: #00897B">🎭 Culture</span>
+        <span class="branch-pill" style="--pill-color: #8D6E63">🦅 Character</span>
+        <span class="branch-pill" style="--pill-color: #7B1FA2">👥 Politics</span>
+      </div>
+      <button id="start-btn" class="btn btn-primary btn-large" aria-label="Begin the emperor quiz">
+        Begin Your Journey
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </button>
+      <div class="start-footer">
+        <a href="https://buymeacoffee.com/aaronchernick" target="_blank" rel="noopener noreferrer" class="btn btn-coffee-pill">☕ Buy Me a Coffee</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="game-screen" class="screen hidden">
+    <div class="game-header">
+      <div class="progress-bar">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+      <div class="game-header-row">
+        <span id="card-count" class="card-count">1 / 20</span>
+        <button id="finish-btn" class="btn btn-finish">Finish Now →</button>
+      </div>
+    </div>
+
+    <div class="card-container">
+      <div id="question-card" class="question-card">
+        <div id="card-branch" class="card-branch">👑 Power</div>
+        <p id="card-text" class="card-text"></p>
+        <p id="card-context" class="card-context"></p>
+      </div>
+    </div>
+
+    <div class="action-prompt">Do you agree?</div>
+
+    <div class="action-buttons">
+      <button id="dislike-btn" class="btn btn-dislike" aria-label="I disagree"><span class="btn-icon" aria-hidden="true">👎</span></button>
+      <button id="like-btn" class="btn btn-like" aria-label="I agree"><span class="btn-icon" aria-hidden="true">👍</span></button>
+    </div>
+
+    <div class="keyboard-hint" aria-hidden="true">← Left arrow: disagree · Right arrow: agree →</div>
+  </div>
+
+  <div id="results-screen" class="screen hidden">
+    <div class="results-container">
+      <div class="results-tabs">
+        <button id="tab-results" class="tab-btn tab-active">Your Emperor</button>
+        <button id="tab-stats" class="tab-btn">Stats & Insights</button>
+      </div>
+
+      <div id="results-tab-content" class="tab-content">
+        <div class="results-header">
+          <h2 class="results-label">Your Imperial Identity</h2>
+          <h1 id="type-title" class="type-title"></h1>
+          <p id="type-subtitle" class="type-subtitle"></p>
+        </div>
+
+        <div class="result-gif-container">
+          <img id="result-gif" class="result-gif" src="" alt="Your emperor character" loading="lazy" />
+        </div>
+
+        <p id="type-description" class="type-description"></p>
+
+        <div class="stats-section">
+          <h3 class="stats-title">📊 Your Top Emperors</h3>
+          <p id="total-stats" class="total-stats"></p>
+          <div id="branch-stats" class="branch-stats"></div>
+        </div>
+
+        <button id="play-again-btn" class="btn btn-primary btn-large" aria-label="Play the quiz again">Play Again <span class="btn-arrow" aria-hidden="true">↻</span></button>
+
+        <div id="emperor-traits-section" class="stats-section">
+          <h3 class="stats-title">📜 Historical Context</h3>
+          <p id="emperor-traits" class="type-description" style="margin-bottom:0;"></p>
+        </div>
+      </div>
+
+      <div id="stats-tab-content" class="tab-content hidden">
+        <div class="stats-page">
+          <div class="stats-section">
+            <h3 class="stats-title">🧠 Your Session</h3>
+            <div class="stat-grid">
+              <div class="stat-card"><div class="stat-value" id="stat-duration">—</div><div class="stat-label">Time to finish</div></div>
+              <div class="stat-card"><div class="stat-value" id="stat-same-primary">—</div><div class="stat-label">share your emperor</div></div>
+              <div class="stat-card"><div class="stat-value" id="stat-same-combo">—</div><div class="stat-label">share your exact combo</div></div>
+            </div>
+          </div>
+
+          <div class="stats-section">
+            <h3 class="stats-title">⏱️ Questions You Took Longest On</h3>
+            <div id="user-slowest-questions" class="stat-list"></div>
+          </div>
+
+          <button id="play-again-btn-2" class="btn btn-primary btn-large" aria-label="Play the quiz again">Play Again <span class="btn-arrow" aria-hidden="true">↻</span></button>
+
+          <div class="stats-section">
+            <h3 class="stats-title">🌍 Global Stats</h3>
+            <div class="stat-grid">
+              <div class="stat-card"><div class="stat-value" id="stat-total-hits">—</div><div class="stat-label">total site visits</div></div>
+              <div class="stat-card"><div class="stat-value" id="stat-total-starts">—</div><div class="stat-label">clicked start</div></div>
+              <div class="stat-card"><div class="stat-value" id="stat-total-finishes">—</div><div class="stat-label">reached results</div></div>
+              <div class="stat-card"><div class="stat-value" id="stat-total-replays">—</div><div class="stat-label">played again</div></div>
+              <div class="stat-card"><div class="stat-value" id="stat-avg-questions">—</div><div class="stat-label">avg questions completed</div></div>
+            </div>
+          </div>
+
+          <div class="stats-section">
+            <h3 class="stats-title">🔥 Most Agreed With (All Users)</h3>
+            <div id="global-most-popular" class="stat-list"></div>
+          </div>
+
+          <div class="stats-section">
+            <h3 class="stats-title">🧊 Most Disagreed With (All Users)</h3>
+            <div id="global-least-popular" class="stat-list"></div>
+          </div>
+
+          <div class="stats-section">
+            <h3 class="stats-title">🐢 Longest Questions Across All Users</h3>
+            <div id="global-slowest-questions" class="stat-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GDPR Cookie Consent Banner -->
+  <div id="cookie-consent-banner" class="cookie-banner hidden" role="dialog" aria-label="Cookie consent">
+    <div class="cookie-banner-inner">
+      <p class="cookie-text">We use cookies and analytics to improve your experience. Your data is anonymized and never sold.</p>
+      <div class="cookie-actions">
+        <button id="cookie-accept" class="btn btn-cookie-accept">Accept</button>
+        <button id="cookie-reject" class="btn btn-cookie-reject">Decline</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.local.js"></script>
+  <script src="questions.js"></script>
+  <script src="supabase.js"></script>
+  <script src="gdpr.js"></script>
+  <script src="app.js"></script>
+
+  <!-- Vercel Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>
+  <!-- Vercel Speed Insights -->
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+</html>

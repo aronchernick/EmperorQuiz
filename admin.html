@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal — Roman Emperor Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0f0f1a;
+      --bg-card: #1a1a2e;
+      --text: #eaeaea;
+      --text-muted: #8888aa;
+      --accent: #C9A84C;
+      --accent-glow: rgba(201, 168, 76, 0.3);
+      --danger: #e17055;
+      --success: #00b894;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow: 0 8px 32px rgba(0,0,0,0.3);
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(201, 168, 76, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(0, 184, 148, 0.04) 0%, transparent 50%);
+    }
+
+    .hidden { display: none !important; }
+
+    /* ===== LOGIN ===== */
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-container {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      animation: fadeUp 0.6s ease-out;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-icon { font-size: 3rem; margin-bottom: 16px; }
+
+    .login-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .login-subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 28px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      transition: border-color var(--transition);
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--accent);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .form-input::placeholder { color: rgba(255,255,255,0.2); }
+
+    .login-error {
+      color: var(--danger);
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      min-height: 20px;
+    }
+
+    .login-hint {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-top: 16px;
+      opacity: 0.6;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn:active { transform: scale(0.96); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0f0f1a;
+      padding: 14px 28px;
+      font-size: 1rem;
+      width: 100%;
+      justify-content: center;
+      box-shadow: 0 4px 20px var(--accent-glow);
+    }
+
+    .btn-primary:hover {
+      background: #d4b85c;
+      transform: translateY(-1px);
+    }
+
+    .btn-sm {
+      padding: 8px 16px;
+      font-size: 0.8rem;
+      width: auto;
+    }
+
+    .btn-danger {
+      background: rgba(225, 112, 85, 0.15);
+      color: var(--danger);
+      border: 1px solid rgba(225, 112, 85, 0.3);
+      padding: 8px 16px;
+      font-size: 0.8rem;
+    }
+
+    .btn-danger:hover {
+      background: rgba(225, 112, 85, 0.25);
+    }
+
+    .btn-success {
+      background: rgba(0, 184, 148, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(0, 184, 148, 0.3);
+      padding: 8px 16px;
+      font-size: 0.8rem;
+    }
+
+    .btn-success:hover {
+      background: rgba(0, 184, 148, 0.25);
+    }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.06);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255,255,255,0.1);
+      color: var(--text);
+    }
+
+    /* ===== ADMIN DASHBOARD ===== */
+    .admin-screen {
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .admin-header {
+      max-width: 900px;
+      margin: 0 auto 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .admin-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .admin-header-left h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--accent);
+    }
+
+    .admin-header-right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .admin-tabs {
+      max-width: 900px;
+      margin: 0 auto 24px;
+      display: flex;
+      gap: 4px;
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .admin-tab {
+      flex: 1;
+      padding: 10px 16px;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .admin-tab:hover {
+      color: var(--text);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .admin-tab.active {
+      background: rgba(201, 168, 76, 0.15);
+      color: var(--accent);
+    }
+
+    .admin-content {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .admin-panel {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .panel-body {
+      padding: 20px 24px;
+    }
+
+    /* ===== EMPEROR LIST ===== */
+    .emperor-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .emperor-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: var(--radius-sm);
+      transition: all var(--transition);
+    }
+
+    .emperor-item:hover {
+      background: rgba(255,255,255,0.04);
+    }
+
+    .emperor-item-icon {
+      font-size: 1.5rem;
+      width: 36px;
+      text-align: center;
+    }
+
+    .emperor-item-info {
+      flex: 1;
+    }
+
+    .emperor-item-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .emperor-item-detail {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .emperor-item-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .emperor-color-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ===== QUESTION LIST ===== */
+    .question-item {
+      padding: 16px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+    }
+
+    .question-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .question-item-id {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      background: rgba(201, 168, 76, 0.1);
+      padding: 3px 8px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .question-item-text {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .question-item-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .question-scoring {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+      font-size: 0.75rem;
+    }
+
+    .scoring-agree, .scoring-disagree {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .scoring-agree { border-left: 3px solid var(--success); }
+    .scoring-disagree { border-left: 3px solid var(--danger); }
+
+    .scoring-label {
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .scoring-agree .scoring-label { color: var(--success); }
+    .scoring-disagree .scoring-label { color: var(--danger); }
+
+    .scoring-list {
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ===== FILTER BAR ===== */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .filter-select {
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .filter-select option {
+      background: var(--bg-card);
+    }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius);
+      padding: 32px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 16px 64px rgba(0,0,0,0.5);
+      animation: fadeUp 0.3s ease-out;
+    }
+
+    .modal h3 {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      color: var(--accent);
+    }
+
+    .modal .form-group { margin-bottom: 14px; }
+
+    .modal .form-input, .modal .form-textarea {
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .modal .form-textarea {
+      min-height: 80px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .modal .form-input:focus, .modal .form-textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .scoring-editor {
+      margin-top: 8px;
+    }
+
+    .scoring-editor-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-muted);
+    }
+
+    .scoring-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .scoring-row select {
+      flex: 1;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    .scoring-row select option { background: var(--bg-card); }
+
+    .scoring-row input[type="number"] {
+      width: 60px;
+      padding: 6px 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.8rem;
+      text-align: center;
+      outline: none;
+    }
+
+    .scoring-row .btn-remove-scoring {
+      background: none;
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 4px;
+    }
+
+    .btn-add-scoring {
+      background: none;
+      border: 1px dashed rgba(255,255,255,0.15);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      margin-top: 4px;
+    }
+
+    .btn-add-scoring:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ===== SUCCESS TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-card);
+      border: 1px solid rgba(0, 184, 148, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 14px 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--success);
+      box-shadow: var(--shadow);
+      z-index: 10000;
+      animation: fadeUp 0.3s ease-out;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+      .admin-header { flex-direction: column; align-items: flex-start; }
+      .admin-tabs { flex-direction: column; }
+      .modal { padding: 24px 20px; }
+      .question-scoring { flex-direction: column; }
+      .scoring-row { flex-wrap: wrap; }
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 99px; }
+  </style>
+</head>
+<body>
+
+  <!-- ===== LOGIN SCREEN ===== -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-container">
+      <div class="login-icon">🔒</div>
+      <h1 class="login-title">Admin Portal</h1>
+      <p class="login-subtitle">Roman Emperor Game — Management Console</p>
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input type="text" id="login-username" class="form-input" placeholder="Enter username" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" id="login-password" class="form-input" placeholder="Enter password">
+        </div>
+        <div id="login-error" class="login-error"></div>
+        <button type="submit" class="btn btn-primary">Sign In</button>
+      </form>
+      <p class="login-hint">Test credentials: admin / imperator</p>
+      <div style="margin-top: 20px;">
+        <a href="index.html" style="color: var(--text-muted); font-size: 0.8rem; text-decoration: none;">← Back to Game</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ADMIN DASHBOARD ===== -->
+  <div id="admin-screen" class="admin-screen hidden">
+    <div class="admin-header">
+      <div class="admin-header-left">
+        <h1>🏛️ Emperor Admin</h1>
+      </div>
+      <div class="admin-header-right">
+        <a href="index.html" class="btn btn-ghost">← Back to Game</a>
+        <button id="logout-btn" class="btn btn-danger">Logout</button>
+      </div>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="emperors">👑 Emperors</button>
+      <button class="admin-tab" data-tab="questions">❓ Questions</button>
+    </div>
+
+    <div class="admin-content">
+      <!-- EMPERORS TAB -->
+      <div id="tab-emperors" class="admin-panel">
+        <div class="panel-header">
+          <h2>👑 Manage Emperors (<span id="emperor-count">0</span>)</h2>
+          <button id="add-emperor-btn" class="btn btn-success btn-sm">+ Add Emperor</button>
+        </div>
+        <div class="panel-body">
+          <div id="emperor-list" class="emperor-list"></div>
+        </div>
+      </div>
+
+      <!-- QUESTIONS TAB -->
+      <div id="tab-questions" class="admin-panel hidden">
+        <div class="panel-header">
+          <h2>❓ Manage Questions (<span id="question-count">0</span>)</h2>
+          <button id="add-question-btn" class="btn btn-success btn-sm">+ Add Question</button>
+        </div>
+        <div class="panel-body">
+          <div class="filter-bar">
+            <select id="filter-category" class="filter-select">
+              <option value="all">All Categories</option>
+            </select>
+          </div>
+          <div id="question-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL CONTAINER ===== -->
+  <div id="modal-container"></div>
+
+  <script src="questions.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
