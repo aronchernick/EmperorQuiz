@@ -11,8 +11,8 @@
   --bg-card-hover: #1f1f35;
   --text: #eaeaea;
   --text-muted: #8888aa;
-  --accent: #6c5ce7;
-  --accent-glow: rgba(108, 92, 231, 0.3);
+  --accent: #C9A84C;
+  --accent-glow: rgba(201, 168, 76, 0.3);
   --like: #00b894;
   --like-glow: rgba(0, 184, 148, 0.3);
   --dislike: #e17055;
@@ -37,9 +37,9 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   background-image:
-    radial-gradient(ellipse at 20% 50%, rgba(108, 92, 231, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 50%, rgba(201, 168, 76, 0.08) 0%, transparent 50%),
     radial-gradient(ellipse at 80% 20%, rgba(0, 184, 148, 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 80%, rgba(225, 112, 85, 0.05) 0%, transparent 50%);
+    radial-gradient(ellipse at 50% 80%, rgba(211, 47, 47, 0.05) 0%, transparent 50%);
 }
 
 .hidden {
@@ -74,14 +74,14 @@ body {
 
 .btn-primary {
   background: var(--accent);
-  color: white;
+  color: #0f0f1a;
   padding: 16px 36px;
   font-size: 1.1rem;
   box-shadow: 0 4px 20px var(--accent-glow);
 }
 
 .btn-primary:hover {
-  background: #7c6cf0;
+  background: #d4b85c;
   box-shadow: 0 6px 28px var(--accent-glow);
   transform: translateY(-2px);
 }
@@ -154,7 +154,7 @@ body {
   font-family: 'Playfair Display', serif;
   font-size: 3.5rem;
   font-weight: 900;
-  background: linear-gradient(135deg, #6c5ce7, #a29bfe, #6c5ce7);
+  background: linear-gradient(135deg, #C9A84C, #E8D48B, #C9A84C);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -289,7 +289,7 @@ body {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent), #a29bfe);
+  background: linear-gradient(90deg, var(--accent), #E8D48B);
   border-radius: 99px;
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   width: 0%;
@@ -373,32 +373,24 @@ body {
   border-top: 1px solid rgba(255,255,255,0.06);
 }
 
-.action-prompt {
-  text-align: center;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text);
-  margin-top: 20px;
-  margin-bottom: 8px;
-}
-
 .action-buttons {
   display: flex;
   gap: 16px;
   width: 100%;
   max-width: 520px;
-  margin: 8px auto 0;
+  margin: 24px auto 0;
 }
 
 .btn-like, .btn-dislike {
   flex: 1;
-  padding: 20px 24px;
+  padding: 16px 20px;
   border-radius: var(--radius);
-  font-size: 1.6rem;
+  font-size: 0.95rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 64px;
+  gap: 10px;
+  min-height: 56px;
 }
 
 .btn-like {
@@ -426,7 +418,11 @@ body {
 }
 
 .btn-icon {
-  font-size: 1.6rem;
+  font-size: 1.3rem;
+}
+
+.btn-label {
+  font-weight: 600;
 }
 
 .btn-flash {
@@ -487,7 +483,7 @@ body {
 
 .tab-active {
   background: var(--accent);
-  color: white;
+  color: #0f0f1a;
   box-shadow: 0 2px 12px var(--accent-glow);
 }
 
@@ -518,16 +514,38 @@ body {
   margin-bottom: 12px;
 }
 
+.emperor-icon-large {
+  font-size: 4rem;
+  margin-bottom: 12px;
+}
+
+.emperor-reign {
+  font-size: 0.9rem;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.emperor-title-sub {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 8px;
+}
+
 .type-title {
   font-family: 'Playfair Display', serif;
   font-size: 2.4rem;
   font-weight: 900;
   margin-bottom: 8px;
   line-height: 1.2;
-  background: linear-gradient(135deg, var(--accent), #a29bfe, var(--like));
+  background: linear-gradient(135deg, #C9A84C, #E8D48B, #C9A84C);
+  background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: shimmer 3s ease-in-out infinite;
 }
 
 .type-subtitle {
@@ -734,6 +752,107 @@ body {
   margin-bottom: 28px;
 }
 
+/* ===== EMPEROR RANKING ===== */
+.emperor-ranking {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ranking-item {
+  background: rgba(255,255,255,0.02);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+.ranking-top {
+  background: rgba(201, 168, 76, 0.08);
+  border-color: rgba(201, 168, 76, 0.2);
+}
+
+.ranking-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.ranking-position {
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  min-width: 28px;
+}
+
+.ranking-top .ranking-position {
+  font-size: 1.1rem;
+}
+
+.ranking-name {
+  flex: 1;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.ranking-top .ranking-name {
+  color: var(--accent);
+}
+
+.ranking-score {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.ranking-bar-container {
+  height: 6px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.ranking-bar {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== ADMIN LINK ===== */
+.admin-link-container {
+  margin-top: 16px;
+}
+
+.admin-link {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity var(--transition);
+}
+
+.admin-link:hover {
+  opacity: 1;
+  color: var(--accent);
+}
+
+/* ===== RESULTS ANIMATION ===== */
+.results-animate .results-header {
+  animation: fadeUp 0.6s ease-out;
+}
+
+.results-animate .result-gif-container {
+  animation: fadeUp 0.8s ease-out;
+}
+
+.results-animate .type-description {
+  animation: fadeUp 1s ease-out;
+}
+
+.results-animate .stats-section {
+  animation: fadeUp 1.2s ease-out;
+}
+
 @media (max-width: 600px) {
   #play-again-btn,
   #play-again-btn-2 {
@@ -746,9 +865,9 @@ body {
   .card-text { font-size: 1.05rem; }
   .question-card { padding: 28px 22px; }
   .type-title { font-size: 1.8rem; }
-  .action-buttons { gap: 12px; }
-  .btn-like, .btn-dislike { padding: 18px 16px; min-height: 60px; }
-  .btn-icon { font-size: 1.8rem; }
+  .action-buttons { gap: 10px; }
+  .btn-like, .btn-dislike { padding: 14px 10px; min-height: 52px; font-size: 0.85rem; }
+  .btn-icon { font-size: 1.2rem; }
   .btn-large { width: 100%; justify-content: center; padding: 18px 24px; min-height: 56px; }
   .keyboard-hint { display: none; }
   .stat-grid { grid-template-columns: repeat(2, 1fr); }

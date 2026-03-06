@@ -1,9 +1,17 @@
 // Emperor Quiz — Main Game Logic
 // Scores questions toward specific Roman emperors based on agree/disagree weights.
+'use strict';
+
+/** Escapes HTML special characters to prevent XSS in innerHTML contexts. */
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
 
 class EmperorQuiz {
   constructor() {
-    this.totalCards = 20;
+    this.totalCards = 30;
     this.currentIndex = 0;
     this.responses = [];
     this.emperorScores = {};
@@ -202,6 +210,12 @@ class EmperorQuiz {
     document.getElementById('card-text').textContent = question.text;
     document.getElementById('card-context').textContent = question.context;
 
+    // Update button labels with question-specific text
+    const likeTextEl = document.getElementById('like-btn-text');
+    const dislikeTextEl = document.getElementById('dislike-btn-text');
+    if (likeTextEl) likeTextEl.textContent = question.likeText || 'Agree';
+    if (dislikeTextEl) dislikeTextEl.textContent = question.dislikeText || 'Disagree';
+
     const card = document.getElementById('question-card');
     card.classList.remove('card-exit-left', 'card-exit-right');
     card.classList.add('card-enter');
@@ -275,9 +289,12 @@ class EmperorQuiz {
     const secondary = this.secondaryEmperor ? EMPERORS[this.secondaryEmperor] : null;
 
     if (primary) {
-      document.getElementById('type-title').textContent = `${primary.icon} ${primary.name}`;
-      document.getElementById('type-subtitle').textContent = `${primary.title} · ${primary.reign}`;
-      document.getElementById('type-description').textContent = primary.description;
+      document.getElementById('emperor-name').textContent = primary.name;
+      document.getElementById('emperor-reign').textContent = primary.reign;
+      document.getElementById('emperor-title-sub').textContent = primary.title;
+      document.getElementById('emperor-tagline').textContent = primary.tagline;
+      document.getElementById('emperor-description').textContent = primary.description;
+      document.getElementById('emperor-icon-large').textContent = primary.icon;
       document.getElementById('result-gif').src = primary.gif || '';
 
       const traitsEl = document.getElementById('emperor-traits');
@@ -308,34 +325,69 @@ class EmperorQuiz {
   }
 
   renderStats(ranked) {
-    const container = document.getElementById('branch-stats');
+    // ===== Emperor Ranking =====
+    const container = document.getElementById('emperor-ranking');
     container.innerHTML = '';
 
-    // Show top 6 emperors with scores
-    const topEmperors = ranked.filter(e => e.score > 0).slice(0, 6);
+    const topEmperors = ranked.filter(e => e.score > 0).slice(0, 5);
     const maxScore = topEmperors.length > 0 ? topEmperors[0].score : 1;
 
-    topEmperors.forEach(({ key, score, emperor }) => {
-      const percent = Math.round((score / maxScore) * 100);
-
-      const statEl = document.createElement('div');
-      statEl.className = 'branch-stat';
-      statEl.innerHTML = `
-        <div class="branch-stat-header">
-          <span class="branch-stat-name">${emperor.icon} ${emperor.name}</span>
-          <span class="branch-stat-count">${score} points</span>
+    topEmperors.forEach(({ key, score, emperor }, index) => {
+      const pct = Math.round((score / maxScore) * 100);
+      const el = document.createElement('div');
+      el.className = 'ranking-item' + (index === 0 ? ' ranking-top' : '');
+      el.innerHTML = `
+        <div class="ranking-header">
+          <span class="ranking-position">${index === 0 ? '👑' : '#' + (index + 1)}</span>
+          <span class="ranking-name">${escapeHTML(emperor.icon)} ${escapeHTML(emperor.name)}</span>
+          <span class="ranking-score">${score} pts</span>
         </div>
-        <div class="stat-bar-container">
-          <div class="stat-bar" style="width: ${percent}%; background: ${emperor.color}">${percent > 15 ? `${score} pts` : ''}</div>
+        <div class="ranking-bar-container">
+          <div class="ranking-bar" style="width: ${pct}%; background: ${escapeHTML(emperor.color)}"></div>
         </div>
       `;
-      container.appendChild(statEl);
+      container.appendChild(el);
     });
 
     const totalAgrees = this.responses.filter(r => r.agreed).length;
     const totalDisagrees = this.responses.filter(r => !r.agreed).length;
     document.getElementById('total-stats').textContent =
       `${this.responses.length} questions answered · ${totalAgrees} agreed · ${totalDisagrees} disagreed`;
+
+    // ===== Category Breakdown =====
+    const catContainer = document.getElementById('category-stats');
+    catContainer.innerHTML = '';
+
+    Object.keys(CATEGORIES).forEach(cat => {
+      const info = CATEGORIES[cat];
+      const stat = this.categoryStats[cat];
+      const total = stat.agrees + stat.disagrees;
+      if (total === 0) return;
+
+      const likePercent = Math.round((stat.agrees / total) * 100);
+      const dislikePercent = 100 - likePercent;
+
+      const el = document.createElement('div');
+      el.className = 'branch-stat';
+      el.innerHTML = `
+        <div class="branch-stat-header">
+          <span class="branch-stat-name">${escapeHTML(info.icon)} ${escapeHTML(info.name)}</span>
+          <span class="branch-stat-count">${total} questions</span>
+        </div>
+        <div class="stat-bar-container">
+          <div class="stat-bar stat-bar-like" style="width: ${likePercent}%; background: ${escapeHTML(info.color)}">
+            ${likePercent > 15 ? `👍 ${stat.agrees}` : ''}
+          </div>
+          <div class="stat-bar stat-bar-dislike" style="width: ${dislikePercent}%">
+            ${dislikePercent > 15 ? `👎 ${stat.disagrees}` : ''}
+          </div>
+        </div>
+      `;
+      catContainer.appendChild(el);
+    });
+
+    // Add results animation class
+    document.getElementById('results-screen').classList.add('results-animate');
   }
 
   async loadGlobalStats() {
@@ -354,8 +406,8 @@ class EmperorQuiz {
       const el = document.createElement('div');
       el.className = 'stat-list-item';
       el.innerHTML = `
-        <strong>${i + 1}. ${question.text.slice(0, 90)}...</strong>
-        <div class="stat-detail"><span class="stat-highlight">${(r.timeSpentMs / 1000).toFixed(1)}s</span> · ${catInfo.icon} ${catInfo.name}</div>
+        <strong>${i + 1}. ${escapeHTML(question.text.slice(0, 90))}...</strong>
+        <div class="stat-detail"><span class="stat-highlight">${(r.timeSpentMs / 1000).toFixed(1)}s</span> · ${escapeHTML(catInfo.icon)} ${escapeHTML(catInfo.name)}</div>
       `;
       userSlowestContainer.appendChild(el);
     });
@@ -409,8 +461,8 @@ class EmperorQuiz {
       const el = document.createElement('div');
       el.className = 'stat-list-item';
       el.innerHTML = `
-        <strong>${idx + 1}. ${item.q.text.slice(0, 90)}...</strong>
-        <div class="stat-detail"><span class="stat-highlight">${detailBuilder(item)}</span></div>
+        <strong>${idx + 1}. ${escapeHTML(item.q.text.slice(0, 90))}...</strong>
+        <div class="stat-detail"><span class="stat-highlight">${escapeHTML(detailBuilder(item))}</span></div>
       `;
       container.appendChild(el);
     });
@@ -420,6 +472,7 @@ class EmperorQuiz {
     gameDB.trackEvent('play_again');
     if (typeof gtag === 'function') gtag('event', 'play_again');
     await gameDB.markPlayAgain();
+    document.getElementById('results-screen').classList.remove('results-animate');
     this.currentIndex = 0;
     this.responses = [];
     this.askedIds = new Set();

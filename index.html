@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Emperor Quiz — Which Roman Emperor Are You?</title>
-  <meta name="description" content="Take a 20-question interactive quiz to discover which Roman emperor matches your personality. From Augustus to Justinian, find your imperial identity.">
+  <meta name="description" content="Take a 30-question interactive quiz to discover which Roman emperor matches your personality. From Augustus to Justinian, find your imperial identity.">
 
   <!-- SEO -->
   <meta name="keywords" content="roman emperor quiz, emperor personality quiz, which emperor are you, rome quiz, history quiz, roman empire, augustus, marcus aurelius, trajan">
@@ -15,7 +15,7 @@
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Emperor Quiz — Which Roman Emperor Are You?">
-  <meta property="og:description" content="A 20-question interactive quiz that reveals which Roman emperor matches your personality. Power, warfare, justice, culture, character, or politics?">
+  <meta property="og:description" content="A 30-question interactive quiz that reveals which Roman emperor matches your personality. Power, warfare, justice, culture, character, or politics?">
   <meta property="og:url" content="https://emperorquiz.dev/">
   <meta property="og:site_name" content="Emperor Quiz">
   <meta property="og:image" content="https://emperorquiz.dev/og-image.png">
@@ -51,7 +51,7 @@
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "Emperor Quiz",
-    "description": "A 20-question interactive quiz that reveals which Roman emperor matches your personality and values.",
+    "description": "A 30-question interactive quiz that reveals which Roman emperor matches your personality and values.",
     "url": "https://emperorquiz.dev/",
     "applicationCategory": "EducationalApplication",
     "operatingSystem": "Any",
@@ -95,12 +95,13 @@
     <button id="email-btn" class="btn btn-email-corner" aria-label="Email the developer" title="Email the developer">✉️</button>
     <div class="start-container">
       <div class="start-icon">🏛️</div>
-      <h1 class="start-title">Emperor Quiz</h1>
-      <p class="start-subtitle">Discover which Roman emperor matches your personality</p>
+      <h1 class="start-title">Which Roman Emperor Are You?</h1>
+      <p class="start-subtitle">Discover your imperial identity</p>
       <div class="start-description">
-        <p>Rome's emperors ruled with wildly different values — ambition, justice, art, ruthlessness, philosophy, pragmatism.</p>
-        <p>You'll see 20 statements about power, war, culture, and character. Simply tell us:</p>
-        <p>Do you agree or disagree?</p>
+        <p>You'll face a series of dilemmas about power, war, justice, culture, character, and politics.
+           For each one, choose the side that resonates with you.</p>
+        <p>At the end, we'll reveal which Roman Emperor matches your personality —
+           based on how history's greatest rulers actually thought and ruled.</p>
       </div>
       <div class="branch-preview">
         <span class="branch-pill" style="--pill-color: #C9A84C">👑 Power</span>
@@ -111,11 +112,14 @@
         <span class="branch-pill" style="--pill-color: #7B1FA2">👥 Politics</span>
       </div>
       <button id="start-btn" class="btn btn-primary btn-large" aria-label="Begin the emperor quiz">
-        Begin Your Journey
+        Enter the Senate
         <span class="btn-arrow" aria-hidden="true">→</span>
       </button>
       <div class="start-footer">
         <a href="https://buymeacoffee.com/aaronchernick" target="_blank" rel="noopener noreferrer" class="btn btn-coffee-pill">☕ Buy Me a Coffee</a>
+      </div>
+      <div class="admin-link-container">
+        <a href="admin.html" class="admin-link">🔒 Admin Portal</a>
       </div>
     </div>
   </div>
@@ -126,7 +130,7 @@
         <div id="progress-fill" class="progress-fill"></div>
       </div>
       <div class="game-header-row">
-        <span id="card-count" class="card-count">1 / 20</span>
+        <span id="card-count" class="card-count">1 / 30</span>
         <button id="finish-btn" class="btn btn-finish">Finish Now →</button>
       </div>
     </div>
@@ -139,11 +143,15 @@
       </div>
     </div>
 
-    <div class="action-prompt">Do you agree?</div>
-
     <div class="action-buttons">
-      <button id="dislike-btn" class="btn btn-dislike" aria-label="I disagree"><span class="btn-icon" aria-hidden="true">👎</span></button>
-      <button id="like-btn" class="btn btn-like" aria-label="I agree"><span class="btn-icon" aria-hidden="true">👍</span></button>
+      <button id="dislike-btn" class="btn btn-dislike" aria-label="I disagree">
+        <span class="btn-icon" aria-hidden="true">👎</span>
+        <span id="dislike-btn-text" class="btn-label">Disagree</span>
+      </button>
+      <button id="like-btn" class="btn btn-like" aria-label="I agree">
+        <span class="btn-icon" aria-hidden="true">👍</span>
+        <span id="like-btn-text" class="btn-label">Agree</span>
+      </button>
     </div>
 
     <div class="keyboard-hint" aria-hidden="true">← Left arrow: disagree · Right arrow: agree →</div>
@@ -158,21 +166,29 @@
 
       <div id="results-tab-content" class="tab-content">
         <div class="results-header">
-          <h2 class="results-label">Your Imperial Identity</h2>
-          <h1 id="type-title" class="type-title"></h1>
-          <p id="type-subtitle" class="type-subtitle"></p>
+          <h2 class="results-label">Your Roman Emperor</h2>
+          <div id="emperor-icon-large" class="emperor-icon-large">🏛️</div>
+          <h1 id="emperor-name" class="type-title">Augustus</h1>
+          <p id="emperor-reign" class="emperor-reign">27 BC – 14 AD</p>
+          <p id="emperor-title-sub" class="emperor-title-sub">The Architect of Empire</p>
+          <p id="emperor-tagline" class="type-subtitle">Patient · Strategic · Visionary · Disciplined</p>
         </div>
 
         <div class="result-gif-container">
           <img id="result-gif" class="result-gif" src="" alt="Your emperor character" loading="lazy" />
         </div>
 
-        <p id="type-description" class="type-description"></p>
+        <p id="emperor-description" class="type-description"></p>
 
         <div class="stats-section">
-          <h3 class="stats-title">📊 Your Emperor Rankings</h3>
+          <h3 class="stats-title">🏆 Your Emperor Ranking</h3>
           <p id="total-stats" class="total-stats"></p>
-          <div id="branch-stats" class="branch-stats"></div>
+          <div id="emperor-ranking" class="emperor-ranking"></div>
+        </div>
+
+        <div class="stats-section">
+          <h3 class="stats-title">📊 Category Breakdown</h3>
+          <div id="category-stats" class="branch-stats"></div>
         </div>
 
         <button id="play-again-btn" class="btn btn-primary btn-large" aria-label="Play the quiz again">Play Again <span class="btn-arrow" aria-hidden="true">↻</span></button>
