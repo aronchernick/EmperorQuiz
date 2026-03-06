@@ -27,9 +27,18 @@ CREATE TABLE IF NOT EXISTS page_hits (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- Admin data store: holds emperor/question overrides from the admin portal
+CREATE TABLE IF NOT EXISTS admin_data (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  data_type TEXT NOT NULL UNIQUE,  -- 'emperors' or 'questions'
+  payload JSONB NOT NULL DEFAULT '{}',
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
 ALTER TABLE game_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE responses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE page_hits ENABLE ROW LEVEL SECURITY;
+ALTER TABLE admin_data ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Allow anonymous insert game_sessions" ON game_sessions;
 DROP POLICY IF EXISTS "Allow anonymous select game_sessions" ON game_sessions;
@@ -48,3 +57,9 @@ CREATE POLICY "Allow anonymous select responses" ON responses FOR SELECT USING (
 
 CREATE POLICY "Allow anonymous insert page_hits" ON page_hits FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow anonymous select page_hits" ON page_hits FOR SELECT USING (true);
+
+-- Admin data is managed by the service role key via the serverless API, so
+-- we allow all operations only through service role (no anon access).
+-- If using the anon key in the API, grant access here:
+DROP POLICY IF EXISTS "Allow all admin_data" ON admin_data;
+CREATE POLICY "Allow all admin_data" ON admin_data FOR ALL USING (true) WITH CHECK (true);

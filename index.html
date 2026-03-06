@@ -39,7 +39,6 @@
   <!-- Preconnects -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="https://media.giphy.com">
 
   <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
@@ -167,6 +166,9 @@
       <div id="results-tab-content" class="tab-content">
         <div class="results-header">
           <h2 class="results-label">Your Roman Emperor</h2>
+          <div class="emperor-portrait-container">
+            <img id="emperor-portrait" class="emperor-portrait" src="" alt="Portrait of your emperor" loading="lazy" />
+          </div>
           <div id="emperor-icon-large" class="emperor-icon-large">🏛️</div>
           <h1 id="emperor-name" class="type-title">Augustus</h1>
           <p id="emperor-reign" class="emperor-reign">27 BC – 14 AD</p>
@@ -174,8 +176,12 @@
           <p id="emperor-tagline" class="type-subtitle">Patient · Strategic · Visionary · Disciplined</p>
         </div>
 
-        <div class="result-gif-container">
-          <img id="result-gif" class="result-gif" src="" alt="Your emperor character" loading="lazy" />
+        <div class="match-meter-section">
+          <div class="match-meter-label">Personality Match</div>
+          <div class="match-meter-bar">
+            <div id="match-meter-fill" class="match-meter-fill" style="width: 0%"></div>
+          </div>
+          <div id="match-meter-value" class="match-meter-value">0%</div>
         </div>
 
         <p id="emperor-description" class="type-description"></p>
@@ -192,6 +198,10 @@
         </div>
 
         <button id="play-again-btn" class="btn btn-primary btn-large" aria-label="Play the quiz again">Play Again <span class="btn-arrow" aria-hidden="true">↻</span></button>
+
+        <div class="share-section">
+          <button id="share-btn" class="btn btn-ghost btn-share" aria-label="Share your result">📤 Share Your Result</button>
+        </div>
 
         <div id="emperor-traits-section" class="stats-section">
           <h3 class="stats-title">📜 Historical Context</h3>

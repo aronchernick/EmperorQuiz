@@ -1,44 +1,89 @@
 // Emperor Quiz — Admin Portal Logic
-// Manages CRUD for emperors and questions via localStorage overlay on the base data.
+// Manages CRUD for emperors and questions via Supabase (through serverless API).
 
 (function() {
   'use strict';
 
-  // ===== CREDENTIAL CHECK =====
-  const ADMIN_USER = 'admin';
-  const ADMIN_PASS = 'imperator';
+  // ===== AUTH STATE =====
+  let authToken = sessionStorage.getItem('admin_token') || null;
 
   // ===== STATE =====
   let currentTab = 'emperors';
   let editingEmperor = null;   // emperor key being edited, or null for new
   let editingQuestion = null;  // question id being edited, or null for new
 
-  // ===== DATA LAYER (localStorage overlay) =====
-  // The admin can add/edit/delete emperors and questions. Changes are stored
-  // in localStorage and merged with the base data from questions.js at runtime.
+  // In-memory caches (loaded from DB on dashboard open)
+  let cachedEmperors = null;
+  let cachedQuestions = null;
 
-  function loadEmperors() {
-    const override = localStorage.getItem('admin_emperors');
-    if (override) {
-      try { return JSON.parse(override); } catch(e) { /* fall through */ }
+  // ===== DATA LAYER (Supabase via serverless API) =====
+
+  async function apiFetch(path, options = {}) {
+    const headers = { 'Content-Type': 'application/json', ...options.headers };
+    if (authToken) headers['Authorization'] = 'Bearer ' + authToken;
+    const res = await fetch(path, { ...options, headers });
+    if (res.status === 401) {
+      // Token expired / invalid — force re-login
+      authToken = null;
+      sessionStorage.removeItem('admin_token');
+      loginScreen.classList.remove('hidden');
+      adminScreen.classList.add('hidden');
+      throw new Error('Session expired. Please log in again.');
     }
+    return res;
+  }
+
+  async function loadEmperors() {
+    if (cachedEmperors) return JSON.parse(JSON.stringify(cachedEmperors));
+    try {
+      const res = await apiFetch('/api/admin-data?type=emperors');
+      const json = await res.json();
+      if (json.data) {
+        cachedEmperors = json.data;
+        return JSON.parse(JSON.stringify(cachedEmperors));
+      }
+    } catch (e) { console.error('Failed to load emperors from DB:', e); }
+    // Fall back to base data from questions.js
     return JSON.parse(JSON.stringify(EMPERORS));
   }
 
-  function saveEmperors(data) {
-    localStorage.setItem('admin_emperors', JSON.stringify(data));
+  async function saveEmperors(data) {
+    cachedEmperors = data;
+    try {
+      await apiFetch('/api/admin-data?type=emperors', {
+        method: 'PUT',
+        body: JSON.stringify(data)
+      });
+    } catch (e) {
+      console.error('Failed to save emperors:', e);
+      showToast('Failed to save emperors to database.', true);
+    }
   }
 
-  function loadQuestions() {
-    const override = localStorage.getItem('admin_questions');
-    if (override) {
-      try { return JSON.parse(override); } catch(e) { /* fall through */ }
-    }
+  async function loadQuestions() {
+    if (cachedQuestions) return JSON.parse(JSON.stringify(cachedQuestions));
+    try {
+      const res = await apiFetch('/api/admin-data?type=questions');
+      const json = await res.json();
+      if (json.data) {
+        cachedQuestions = json.data;
+        return JSON.parse(JSON.stringify(cachedQuestions));
+      }
+    } catch (e) { console.error('Failed to load questions from DB:', e); }
     return JSON.parse(JSON.stringify(QUESTIONS));
   }
 
-  function saveQuestions(data) {
-    localStorage.setItem('admin_questions', JSON.stringify(data));
+  async function saveQuestions(data) {
+    cachedQuestions = data;
+    try {
+      await apiFetch('/api/admin-data?type=questions', {
+        method: 'PUT',
+        body: JSON.stringify(data)
+      });
+    } catch (e) {
+      console.error('Failed to save questions:', e);
+      showToast('Failed to save questions to database.', true);
+    }
   }
 
   // ===== LOGIN =====
@@ -47,36 +92,53 @@
   const loginForm = document.getElementById('login-form');
   const loginError = document.getElementById('login-error');
 
-  // Check if already logged in
-  if (sessionStorage.getItem('admin_logged_in') === 'true') {
+  // Check if already logged in (token in sessionStorage)
+  if (authToken) {
     showDashboard();
   }
 
-  loginForm.addEventListener('submit', function(e) {
+  loginForm.addEventListener('submit', async function(e) {
     e.preventDefault();
     const user = document.getElementById('login-username').value.trim();
     const pass = document.getElementById('login-password').value;
-    if (user === ADMIN_USER && pass === ADMIN_PASS) {
-      sessionStorage.setItem('admin_logged_in', 'true');
-      loginError.textContent = '';
-      showDashboard();
-    } else {
-      loginError.textContent = 'Invalid credentials. Please try again.';
-      document.getElementById('login-password').value = '';
+    loginError.textContent = '';
+
+    try {
+      const res = await fetch('/api/admin-auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: user, password: pass })
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        authToken = json.token;
+        sessionStorage.setItem('admin_token', authToken);
+        showDashboard();
+      } else {
+        const json = await res.json().catch(function() { return {}; });
+        loginError.textContent = json.error || 'Invalid credentials. Please try again.';
+        document.getElementById('login-password').value = '';
+      }
+    } catch (err) {
+      loginError.textContent = 'Connection error. Please try again.';
     }
   });
 
   document.getElementById('logout-btn').addEventListener('click', function() {
-    sessionStorage.removeItem('admin_logged_in');
+    authToken = null;
+    sessionStorage.removeItem('admin_token');
+    cachedEmperors = null;
+    cachedQuestions = null;
     loginScreen.classList.remove('hidden');
     adminScreen.classList.add('hidden');
   });
 
-  function showDashboard() {
+  async function showDashboard() {
     loginScreen.classList.add('hidden');
     adminScreen.classList.remove('hidden');
-    renderEmperors();
-    renderQuestions();
+    await renderEmperors();
+    await renderQuestions();
     populateCategoryFilter();
   }
 
@@ -92,8 +154,8 @@
   });
 
   // ===== RENDER EMPERORS =====
-  function renderEmperors() {
-    const emps = loadEmperors();
+  async function renderEmperors() {
+    const emps = await loadEmperors();
     const keys = Object.keys(emps);
     document.getElementById('emperor-count').textContent = keys.length;
 
@@ -129,9 +191,9 @@
   }
 
   // ===== RENDER QUESTIONS =====
-  function renderQuestions() {
-    const questions = loadQuestions();
-    const emps = loadEmperors();
+  async function renderQuestions() {
+    const questions = await loadQuestions();
+    const emps = await loadEmperors();
     const empKeys = Object.keys(emps);
     const filterCat = document.getElementById('filter-category').value;
 
@@ -203,9 +265,9 @@
   });
 
   // ===== EMPEROR MODAL =====
-  function openEmperorModal(key) {
+  async function openEmperorModal(key) {
     editingEmperor = key;
-    var emps = loadEmperors();
+    var emps = await loadEmperors();
     var emp = key ? emps[key] : {};
 
     var html = '<div class="modal-overlay" id="modal-overlay">' +
@@ -244,8 +306,8 @@
           '<textarea class="form-textarea" id="emp-description" rows="4" placeholder="Full personality description...">' + escapeHtml(emp.description || '') + '</textarea>' +
         '</div>' +
         '<div class="form-group">' +
-          '<label class="form-label">GIF URL</label>' +
-          '<input class="form-input" id="emp-gif" value="' + escapeAttr(emp.gif || '') + '" placeholder="https://...">' +
+          '<label class="form-label">Portrait URL</label>' +
+          '<input class="form-input" id="emp-portrait" value="' + escapeAttr(emp.portrait || '') + '" placeholder="https://...">' +
         '</div>' +
         '<div class="form-group">' +
           '<label class="form-label">Historical Traits</label>' +
@@ -266,7 +328,7 @@
     });
   }
 
-  function saveEmperor() {
+  async function saveEmperor() {
     var key = document.getElementById('emp-key').value.trim().toLowerCase().replace(/\s+/g, '_');
     var name = document.getElementById('emp-name').value.trim();
 
@@ -275,7 +337,7 @@
       return;
     }
 
-    var emps = loadEmperors();
+    var emps = await loadEmperors();
     if (!editingEmperor && emps[key]) {
       showToast('An emperor with key "' + key + '" already exists.', true);
       return;
@@ -289,45 +351,45 @@
       color: document.getElementById('emp-color').value.trim() || '#C9A84C',
       tagline: document.getElementById('emp-tagline').value.trim(),
       description: document.getElementById('emp-description').value.trim(),
-      gif: document.getElementById('emp-gif').value.trim(),
+      portrait: document.getElementById('emp-portrait').value.trim(),
       traits: document.getElementById('emp-traits').value.trim()
     };
 
-    saveEmperors(emps);
+    await saveEmperors(emps);
     closeModal();
-    renderEmperors();
+    await renderEmperors();
     showToast(editingEmperor ? 'Emperor updated.' : 'Emperor added.');
   }
 
-  function deleteEmperor(key) {
-    var emps = loadEmperors();
+  async function deleteEmperor(key) {
+    var emps = await loadEmperors();
     var name = emps[key] ? emps[key].name : key;
     if (!confirm('Delete emperor "' + name + '"? This will also remove their scoring from all questions.')) return;
 
     delete emps[key];
-    saveEmperors(emps);
+    await saveEmperors(emps);
 
     // Also strip this emperor from all question scoring
-    var questions = loadQuestions();
+    var questions = await loadQuestions();
     questions.forEach(function(q) {
       if (q.agree && q.agree[key]) delete q.agree[key];
       if (q.disagree && q.disagree[key]) delete q.disagree[key];
     });
-    saveQuestions(questions);
+    await saveQuestions(questions);
 
-    renderEmperors();
-    renderQuestions();
+    await renderEmperors();
+    await renderQuestions();
     showToast('Emperor "' + name + '" deleted.');
   }
 
   // ===== QUESTION MODAL =====
-  function openQuestionModal(id) {
+  async function openQuestionModal(id) {
     editingQuestion = id;
-    var questions = loadQuestions();
+    var questions = await loadQuestions();
     var q = id ? questions.find(function(x) { return x.id === id; }) : {};
     if (!q) q = {};
 
-    var emps = loadEmperors();
+    var emps = await loadEmperors();
     var empKeys = Object.keys(emps);
 
     var html = '<div class="modal-overlay" id="modal-overlay">' +
@@ -451,7 +513,7 @@
     return obj;
   }
 
-  function saveQuestion() {
+  async function saveQuestion() {
     var id = document.getElementById('q-id').value.trim().toLowerCase().replace(/\s+/g, '_');
     var text = document.getElementById('q-text').value.trim();
 
@@ -460,7 +522,7 @@
       return;
     }
 
-    var questions = loadQuestions();
+    var questions = await loadQuestions();
 
     if (!editingQuestion) {
       // Check for duplicate id
@@ -490,18 +552,18 @@
       questions.push(newQ);
     }
 
-    saveQuestions(questions);
+    await saveQuestions(questions);
     closeModal();
-    renderQuestions();
+    await renderQuestions();
     showToast(editingQuestion ? 'Question updated.' : 'Question added.');
   }
 
-  function deleteQuestion(id) {
+  async function deleteQuestion(id) {
     if (!confirm('Delete question "' + id + '"?')) return;
-    var questions = loadQuestions();
+    var questions = await loadQuestions();
     var filtered = questions.filter(function(q) { return q.id !== id; });
-    saveQuestions(filtered);
-    renderQuestions();
+    await saveQuestions(filtered);
+    await renderQuestions();
     showToast('Question deleted.');
   }
 

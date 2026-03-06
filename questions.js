@@ -11,7 +11,7 @@ const EMPERORS = {
     color: "#C9A84C",
     tagline: "Patient · Strategic · Visionary · Disciplined",
     description: "You are Augustus — the master builder. You don't seize power rashly; you engineer it. Behind a modest exterior lies a mind that thinks in decades, not days. You transformed a broken republic into a golden age through patience, propaganda, and political genius. You understand that true power isn't about brute force — it's about making the world believe you're indispensable. You'd never call yourself king, but everyone knows who rules.",
-    gif: "https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Augustus_Bevilacqua_Glyptothek_Munich_317.jpg/440px-Augustus_Bevilacqua_Glyptothek_Munich_317.jpg",
     traits: "Founder of the Roman Empire. Master of diplomacy and political maneuvering. Built the Pax Romana through patience and cunning rather than violence."
   },
   tiberius: {
@@ -22,7 +22,7 @@ const EMPERORS = {
     color: "#607D8B",
     tagline: "Cautious · Competent · Withdrawn · Suspicious",
     description: "You are Tiberius — the reluctant ruler who never wanted the throne but bore its weight with grim determination. You're competent, careful, and deeply private. While others crave the spotlight, you'd rather retreat to your island and let the world sort itself out. You trust few, delegate grudgingly, and see through flattery instantly. Your administration may lack warmth, but it runs like clockwork.",
-    gif: "https://media.giphy.com/media/l0IylOPCNkiqOgMyA/giphy.gif",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Tiberius_palermo.jpg/440px-Tiberius_palermo.jpg",
     traits: "Effective but reclusive administrator. Preferred solitude on Capri. Competent general who grew increasingly paranoid."
   },
   caligula: {
@@ -33,7 +33,7 @@ const EMPERORS = {
     color: "#FF5252",
     tagline: "Bold · Erratic · Extravagant · Absolute",
     description: "You are Caligula — and you refuse to play by anyone's rules but your own. You see the absurdity in tradition, the hypocrisy in the Senate, and you'd rather burn the playbook than follow it. You demand absolute loyalty and absolute spectacle. Others call you mad, but maybe you're the only one honest enough to say what power really is. You'd make your horse a senator just to prove a point.",
-    gif: "https://media.giphy.com/media/3og0ITQOC5wlyk8ffy/giphy.gif",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Caligula_bust.jpg/440px-Caligula_bust.jpg",
     traits: "Initially popular, became increasingly tyrannical. Known for extravagance and unpredictable behavior. Demanded to be worshipped as a god."
   },
   claudius: {
@@ -44,7 +44,7 @@ const EMPERORS = {
     color: "#78909C",
     tagline: "Intellectual · Underestimated · Pragmatic · Inclusive",
     description: "You are Claudius — the one nobody expected. Overlooked, mocked, dismissed as a fool — and you used every bit of that as cover. Behind the stammer lies a brilliant mind: legal reformer, infrastructure builder, historian. You expanded the empire not just in territory but in who counted as Roman. You prove that the quiet ones, the ones who listen and learn, often rule the best.",
-    gif: "https://media.giphy.com/media/l1J9EdzfOSgfyueLm/giphy.gif",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Claudius_crop.jpg/440px-Claudius_crop.jpg",
     traits: "Scholarly emperor who expanded citizenship and reformed the bureaucracy. Conquered Britain. Overlooked by his family, he became one of Rome's most effective administrators."
   },
   nero: {
@@ -55,7 +55,7 @@ const EMPERORS = {
     color: "#E040FB",
     tagline: "Creative · Populist · Self-Expressive · Theatrical",
     description: "You are Nero — the artist who happened to be emperor. You crave beauty, performance, and the adoration of the crowd. You'd rather compose poetry than attend Senate meetings, and you believe life itself should be a work of art. Your grand visions — golden palaces, epic performances, a remade Rome — are either genius or madness, depending on who's telling the story. You don't care which, as long as they're talking about you.",
-    gif: "https://media.giphy.com/media/l0MYt5jPR6QX5APm0/giphy.gif",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Nero_pushkin.jpg/440px-Nero_pushkin.jpg",
     traits: "Patron of the arts who saw himself as an artist first. Initially popular with the common people. Built the Domus Aurea. His reign ended in chaos."
   },
   vespasian: {
@@ -66,7 +66,7 @@ const EMPERORS = {
     color: "#8D6E63",
     tagline: "Pragmatic · Fiscally Shrewd · Humorous · Grounded",
     description: "You are Vespasian — the common-sense emperor who picked up the pieces after everyone else broke them. No noble pedigree, no grand philosophy — just grit, humor, and an uncanny ability to balance the books. You'd tax urine if it meant funding the Colosseum (and you did). You rose from nothing, earned respect through competence, and died cracking jokes. Pretension is your enemy; results are your religion.",
-    gif: "https://media.giphy.com/media/xT0xeJpnrWC3niaWUS/giphy.gif",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Vespasianus01_pushkin_edit.png/440px-Vespasianus01_pushkin_edit.png",
     traits: "Founded the Flavian dynasty. Restored financial stability after civil war. Down-to-earth personality. Built the Colosseum. Famous for his dry wit."
   },
   trajan: {
@@ -77,7 +77,7 @@ const EMPERORS = {
     color: "#D32F2F",
     tagline: "Glorious · Expansionist · Benevolent · Meritocratic",
     description: "You are Trajan — Optimus Princeps, the best of emperors. You believe greatness is earned on the battlefield and shared with the people. Under your rule, Rome reached its greatest extent, not through tyranny but through courage and generosity. You reward merit over birthright, feed the poor, and lead from the front. You are the emperor other emperors wished they could be.",
-    gif: "https://media.giphy.com/media/xUPGcqaVH1cDeKZTBS/giphy.gif",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Traianus_Glyptothek_Munich_72.jpg/440px-Traianus_Glyptothek_Munich_72.jpg",
     traits: "Expanded Rome to its greatest territorial extent. Known as 'Optimus Princeps' (best ruler). Military genius who was also beloved for public welfare programs."
   },
   hadrian: {
@@ -88,7 +88,7 @@ const EMPERORS = {
     color: "#00897B",
     tagline: "Cultured · Cosmopolitan · Builder · Curious",
     description: "You are Hadrian — the emperor who couldn't sit still. While others ruled from Rome, you walked every corner of your empire, absorbing cultures, designing buildings, writing poetry. You built walls not out of fear but wisdom — knowing that true strength means knowing your limits. Architecture, philosophy, love, adventure — you want it all, and you refuse to be confined by anyone's expectations.",
-    gif: "https://media.giphy.com/media/3ohzdIuqJoo8QdKlnW/giphy.gif",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Bust_of_Hadrian_in_the_Musei_Capitolini_MC817.jpg/440px-Bust_of_Hadrian_in_the_Musei_Capitolini_MC817.jpg",
     traits: "Traveled extensively throughout the empire. Builder of Hadrian's Wall and the Pantheon. Patron of Greek culture. Consolidated rather than expanded the empire."
   },
   marcus_aurelius: {
@@ -99,7 +99,7 @@ const EMPERORS = {
     color: "#5C6BC0",
     tagline: "Stoic · Dutiful · Principled · Contemplative",
     description: "You are Marcus Aurelius — the philosopher who never wanted a sword but picked one up because duty demanded it. You write meditations by candlelight on the frontier, seeking wisdom not for glory but for strength to carry an impossible burden. You believe virtue is its own reward, that character matters more than comfort, and that even an emperor must answer to something higher than himself. You are proof that the noblest ruler is the one who'd rather be reading.",
-    gif: "https://media.giphy.com/media/d3mlE7uhX8KFgEmY/giphy.gif",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/MSR-ra-61-b-1-DET.jpg/440px-MSR-ra-61-b-1-DET.jpg",
     traits: "Stoic philosopher who wrote 'Meditations.' Spent most of his reign at war despite preferring peace. Considered the last of the Five Good Emperors."
   },
   commodus: {
@@ -110,7 +110,7 @@ const EMPERORS = {
     color: "#F4511E",
     tagline: "Thrill-Seeking · Self-Indulgent · Populist · Theatrical",
     description: "You are Commodus — and you'd rather fight in the arena than sit on a throne. Rules, traditions, the Senate's disapproval — none of it matters when the crowd is roaring your name. You inherited the greatest empire on Earth and used it as your personal playground. Irresponsible? Maybe. But you lived more in one day than most people do in a lifetime. You believe power should be fun, and you're absolutely going to enjoy every second of it.",
-    gif: "https://media.giphy.com/media/xT0Gqz4x4eLd5gDtaU/giphy.gif",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Commodus_Musei_Capitolini_MC1120.jpg/440px-Commodus_Musei_Capitolini_MC1120.jpg",
     traits: "Son of Marcus Aurelius who preferred gladiatorial combat to governing. Renamed Rome after himself. His reign marked the beginning of Rome's decline."
   },
   septimius_severus: {
@@ -121,7 +121,7 @@ const EMPERORS = {
     color: "#424242",
     tagline: "Military · Ruthless · Loyal · Transformative",
     description: "You are Septimius Severus — the African-born emperor who seized power through sheer military will and held it through iron discipline. You trust soldiers over senators, reward loyalty above all else, and understand that in a world of wolves, the strongest survive. You expanded the army, enriched the troops, and told your sons to 'enrich the soldiers and ignore everyone else.' Harsh? Maybe. But your empire held.",
-    gif: "https://media.giphy.com/media/3o6Zt6ML6BklcajjsA/giphy.gif",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Septimius_Severus_Glyptothek_Munich_357.jpg/440px-Septimius_Severus_Glyptothek_Munich_357.jpg",
     traits: "First African-born emperor. Military strongman who dissolved the Praetorian Guard. Expanded the army and prioritized military loyalty above all."
   },
   diocletian: {
@@ -132,7 +132,7 @@ const EMPERORS = {
     color: "#1565C0",
     tagline: "Systematic · Transformative · Authoritarian · Disciplined",
     description: "You are Diocletian — the emperor who looked at a crumbling empire and said 'I'll rebuild the entire system from scratch.' You invented the Tetrarchy, reformed taxation, reorganized the army, and standardized the bureaucracy. You see problems as engineering challenges. And when the work was done? You retired to grow cabbages. You're the rare leader who builds something greater than themselves and walks away.",
-    gif: "https://media.giphy.com/media/l4FGuhL4U2WSOXsmI/giphy.gif",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Diocletianus-Vaux1.jpg/440px-Diocletianus-Vaux1.jpg",
     traits: "Ended the Crisis of the Third Century. Created the Tetrarchy (rule of four). Massive administrative and military reforms. Voluntarily abdicated."
   },
   constantine: {
@@ -143,7 +143,7 @@ const EMPERORS = {
     color: "#7B1FA2",
     tagline: "Transformative · Ambitious · Unifying · Bold",
     description: "You are Constantine — the emperor who saw a vision and changed the world. You don't just want to rule an empire; you want to transform civilization. Moving the capital, embracing a new faith, rewriting the rules of power — nothing is too bold. You understand that the greatest leaders don't just manage the present; they create the future. Whether through faith or ambition, you leave a mark that lasts millennia.",
-    gif: "https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Museo_Capitolino_-_Costantino_I.jpg/440px-Museo_Capitolino_-_Costantino_I.jpg",
     traits: "First Christian emperor. Founded Constantinople. United the empire under one rule. His decisions shaped Western civilization for centuries."
   },
   julian: {
@@ -154,7 +154,7 @@ const EMPERORS = {
     color: "#EF6C00",
     tagline: "Intellectual · Contrarian · Philosophical · Principled",
     description: "You are Julian — the emperor who swam against the tide. When the whole world was going one way, you said 'no' and went the other, not out of spite but conviction. A scholar, a soldier, and a philosopher, you tried to restore what was lost and challenge the orthodoxy of your age. You may have failed, but you failed magnificently — and on your own terms. You prove that principles matter more than popularity.",
-    gif: "https://media.giphy.com/media/xTiTnHXbRoaZ1B1Mo8/giphy.gif",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Julian_Apostata_Paris.jpg/440px-Julian_Apostata_Paris.jpg",
     traits: "Last non-Christian emperor. Brilliant scholar and military commander. Attempted to restore traditional Roman religion. Died on campaign in Persia."
   },
   theodosius: {
@@ -165,7 +165,7 @@ const EMPERORS = {
     color: "#00695C",
     tagline: "Diplomatic · Devout · Firm · Pragmatic",
     description: "You are Theodosius — the last emperor to rule both East and West as one. You understand that an empire needs a soul, and you gave yours one — making Christianity the official religion and drawing a line in the sand. Diplomatic when possible, firm when necessary, you navigated a crumbling world with faith and pragmatism in equal measure. You didn't save the empire, but you gave it dignity in its final unified chapter.",
-    gif: "https://media.giphy.com/media/l0Iy69RBOv3hIRyBq/giphy.gif",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Theodosius_I._Roman_Emperor._379-395_CE._Museo_de_la_Real_Academia_de_Bellas_Artes_de_San_Fernando.jpg/440px-Theodosius_I._Roman_Emperor._379-395_CE._Museo_de_la_Real_Academia_de_Bellas_Artes_de_San_Fernando.jpg",
     traits: "Last emperor to rule a united Roman Empire. Made Christianity the state religion. Skilled diplomat who settled with the Goths rather than fighting them."
   },
   justinian: {
@@ -176,7 +176,7 @@ const EMPERORS = {
     color: "#AD1457",
     tagline: "Ambitious · Legal Reformer · Grand Builder · Tireless",
     description: "You are Justinian — the emperor who refused to accept that Rome had fallen. You reconquered lost territories, codified centuries of Roman law into one unified code, and built the Hagia Sophia — a wonder that still stands. You worked tirelessly, slept little, and dreamed of restoring an empire to its former glory. You are proof that sheer force of will can reshape the world, even when everyone says it's too late.",
-    gif: "https://media.giphy.com/media/3ohzdIuqJoo8QdKlnW/giphy.gif",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Mosaic_of_Justinianus_I_-_Basilica_San_Vitale_%28Ravenna%29_v2.jpg/440px-Mosaic_of_Justinianus_I_-_Basilica_San_Vitale_%28Ravenna%29_v2.jpg",
     traits: "Byzantine emperor who reconquered much of the Western Empire. Created the Justinian Code. Built the Hagia Sophia. His wife Theodora was equally influential."
   }
 };

@@ -70,6 +70,8 @@ class EmperorQuiz {
       window.location.href = `mailto:${email}?subject=Emperor%20Quiz%20Feedback`;
     });
 
+    document.getElementById('share-btn').addEventListener('click', () => this.shareResult());
+
     document.addEventListener('keydown', (e) => {
       if (this.isAnimating) return;
       const gameScreen = document.getElementById('game-screen');
@@ -295,7 +297,25 @@ class EmperorQuiz {
       document.getElementById('emperor-tagline').textContent = primary.tagline;
       document.getElementById('emperor-description').textContent = primary.description;
       document.getElementById('emperor-icon-large').textContent = primary.icon;
-      document.getElementById('result-gif').src = primary.gif || '';
+
+      // Portrait image
+      const portraitEl = document.getElementById('emperor-portrait');
+      if (portraitEl) {
+        portraitEl.src = primary.portrait || '';
+        portraitEl.alt = `Portrait of ${primary.name}`;
+      }
+
+      // Match meter - calculate how dominant the top result is
+      const totalPossible = ranked.reduce((sum, e) => sum + Math.max(0, e.score), 0);
+      const matchPct = totalPossible > 0 ? Math.round((ranked[0].score / totalPossible) * 100) : 0;
+      const meterFill = document.getElementById('match-meter-fill');
+      const meterValue = document.getElementById('match-meter-value');
+      if (meterFill && meterValue) {
+        setTimeout(() => {
+          meterFill.style.width = `${matchPct}%`;
+          meterValue.textContent = `${matchPct}%`;
+        }, 600);
+      }
 
       const traitsEl = document.getElementById('emperor-traits');
       if (traitsEl) {
@@ -473,6 +493,11 @@ class EmperorQuiz {
     if (typeof gtag === 'function') gtag('event', 'play_again');
     await gameDB.markPlayAgain();
     document.getElementById('results-screen').classList.remove('results-animate');
+    // Reset match meter
+    const meterFill = document.getElementById('match-meter-fill');
+    if (meterFill) meterFill.style.width = '0%';
+    const meterValue = document.getElementById('match-meter-value');
+    if (meterValue) meterValue.textContent = '0%';
     this.currentIndex = 0;
     this.responses = [];
     this.askedIds = new Set();
@@ -484,6 +509,26 @@ class EmperorQuiz {
       this.categoryStats[cat] = { agrees: 0, disagrees: 0, asked: 0 };
     });
     this.showScreen('start-screen');
+  }
+
+  shareResult() {
+    const primary = this.primaryEmperor ? EMPERORS[this.primaryEmperor] : null;
+    if (!primary) return;
+    const text = `I took the Emperor Quiz and I'm ${primary.name} — ${primary.title}! Which Roman emperor are you?`;
+    const url = 'https://emperorquiz.dev';
+
+    if (navigator.share) {
+      navigator.share({ title: 'Emperor Quiz', text, url }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(`${text}\n${url}`).then(() => {
+        const btn = document.getElementById('share-btn');
+        const original = btn.textContent;
+        btn.textContent = '✅ Copied to clipboard!';
+        setTimeout(() => { btn.textContent = original; }, 2000);
+      }).catch(() => {
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+      });
+    }
   }
 }
 
