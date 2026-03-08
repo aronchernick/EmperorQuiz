@@ -33,8 +33,8 @@
   const existingConsent = localStorage.getItem(CONSENT_KEY);
   if (existingConsent !== null) {
     // Already decided — apply their choice silently
-    if (existingConsent === 'accepted') {
-      enableAnalytics();
+    if (existingConsent === 'rejected') {
+      disableAnalytics();
     }
     return;
   }
@@ -42,13 +42,15 @@
   // Detect country via Vercel geo header (served by /api/geo)
   detectCountry().then(function (country) {
     if (!country || !CONSENT_REQUIRED_COUNTRIES.has(country.toUpperCase())) {
-      // Not in a consent-required country — enable analytics automatically
+      // Not in a consent-required country — analytics already enabled by default
       localStorage.setItem(CONSENT_KEY, 'accepted');
-      enableAnalytics();
       return;
     }
 
-    // Show the consent banner for users in consent-required countries
+    // In a consent-required country — disable analytics until user accepts
+    disableAnalytics();
+
+    // Show the consent banner
     banner.classList.remove('hidden');
 
     acceptBtn.addEventListener('click', function () {
@@ -75,10 +77,17 @@
   }
 
   function enableAnalytics() {
-    // Update Google Analytics consent
     if (typeof gtag === 'function') {
       gtag('consent', 'update', {
         'analytics_storage': 'granted'
+      });
+    }
+  }
+
+  function disableAnalytics() {
+    if (typeof gtag === 'function') {
+      gtag('consent', 'update', {
+        'analytics_storage': 'denied'
       });
     }
   }
