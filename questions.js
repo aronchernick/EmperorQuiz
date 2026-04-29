@@ -99,7 +99,7 @@ const EMPERORS = {
     color: "#5C6BC0",
     tagline: "Stoic · Dutiful · Principled · Contemplative",
     description: "You are Marcus Aurelius — the philosopher who never wanted a sword but picked one up because duty demanded it. You write meditations by candlelight on the frontier, seeking wisdom not for glory but for strength to carry an impossible burden. You believe virtue is its own reward, that character matters more than comfort, and that even an emperor must answer to something higher than himself. You are proof that the noblest ruler is the one who'd rather be reading.",
-    portrait: "https://commons.wikimedia.org/wiki/Special:FilePath/Marcus_Aurelius_bust_2.jpg?width=600",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/0/0d/Busto_pseudoantico_di_marco_aurelio_cesare%2C_1610_ca.%2C_in_marmo_nero_antico_e_portasanta%2C_dalla_coll._giustiniani%2C_MT_348%2C_02.jpg?width=600",
     traits: "Stoic philosopher who wrote 'Meditations.' Spent most of his reign at war despite preferring peace. Considered the last of the Five Good Emperors."
   },
   commodus: {
@@ -132,7 +132,7 @@ const EMPERORS = {
     color: "#1565C0",
     tagline: "Systematic · Transformative · Authoritarian · Disciplined",
     description: "You are Diocletian — the emperor who looked at a crumbling empire and said 'I'll rebuild the entire system from scratch.' You invented the Tetrarchy, reformed taxation, reorganized the army, and standardized the bureaucracy. You see problems as engineering challenges. And when the work was done? You retired to grow cabbages. You're the rare leader who builds something greater than themselves and walks away.",
-    portrait: "https://commons.wikimedia.org/wiki/Special:FilePath/Diocletianus-Vaux1.jpg?width=600",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/8/8a/0_Vaux-le-Vicomte_-_Grand_Salon_-_Buste_de_Dioclétien.JPG?width=600",
     traits: "Ended the Crisis of the Third Century. Created the Tetrarchy (rule of four). Massive administrative and military reforms. Voluntarily abdicated."
   },
   constantine: {
@@ -143,7 +143,7 @@ const EMPERORS = {
     color: "#7B1FA2",
     tagline: "Transformative · Ambitious · Unifying · Bold",
     description: "You are Constantine — the emperor who saw a vision and changed the world. You don't just want to rule an empire; you want to transform civilization. Moving the capital, embracing a new faith, rewriting the rules of power — nothing is too bold. You understand that the greatest leaders don't just manage the present; they create the future. Whether through faith or ambition, you leave a mark that lasts millennia.",
-    portrait: "https://commons.wikimedia.org/wiki/Special:FilePath/Museo_Capitolino_-_Costantino_I.jpg?width=600",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Statua_di_Costantino_ai_musei_capitolini.jpg?width=600",
     traits: "First Christian emperor. Founded Constantinople. United the empire under one rule. His decisions shaped Western civilization for centuries."
   },
   julian: {
@@ -154,7 +154,7 @@ const EMPERORS = {
     color: "#EF6C00",
     tagline: "Intellectual · Contrarian · Philosophical · Principled",
     description: "You are Julian — the emperor who swam against the tide. When the whole world was going one way, you said 'no' and went the other, not out of spite but conviction. A scholar, a soldier, and a philosopher, you tried to restore what was lost and challenge the orthodoxy of your age. You may have failed, but you failed magnificently — and on your own terms. You prove that principles matter more than popularity.",
-    portrait: "https://commons.wikimedia.org/wiki/Special:FilePath/Julian_Apostata_Paris.jpg?width=600",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/5/54/Chalcedony_bust_of_Julian_%281%29.png?width=600",
     traits: "Last non-Christian emperor. Brilliant scholar and military commander. Attempted to restore traditional Roman religion. Died on campaign in Persia."
   },
   theodosius: {
@@ -165,7 +165,7 @@ const EMPERORS = {
     color: "#00695C",
     tagline: "Diplomatic · Devout · Firm · Pragmatic",
     description: "You are Theodosius — the last emperor to rule both East and West as one. You understand that an empire needs a soul, and you gave yours one — making Christianity the official religion and drawing a line in the sand. Diplomatic when possible, firm when necessary, you navigated a crumbling world with faith and pragmatism in equal measure. You didn't save the empire, but you gave it dignity in its final unified chapter.",
-    portrait: "https://commons.wikimedia.org/wiki/Special:FilePath/Theodosius_I._Roman_Emperor._379-395_CE._Museo_de_la_Real_Academia_de_Bellas_Artes_de_San_Fernando.jpg?width=600",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/c/c3/Bust_of_Theodosius_I_%28cropped%29.jpg?width=600",
     traits: "Last emperor to rule a united Roman Empire. Made Christianity the state religion. Skilled diplomat who settled with the Goths rather than fighting them."
   },
   justinian: {
